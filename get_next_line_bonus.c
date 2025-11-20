@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/13 16:35:38 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 18:04:00 by andqueir         ###   ########.fr       */
+/*   Created: 2025/11/18 12:38:37 by andqueir          #+#    #+#             */
+/*   Updated: 2025/11/20 17:37:34 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*help_free(char *buffer, char *temp)
 {
-	char	*tmp;
+	char	tmp;
 
 	tmp = ft_strjoin(buffer, temp);
 	if (!tmp)
@@ -98,65 +98,52 @@ char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1])
 
 char	*get_next_line(int fd)
 {
-	static char	buffer [BUFFER_SIZE + 1];
-	static char	*stash;
+	static char	buffer[MAX_FD][BUFFER_SIZE + 1];
+	static char	*stash[MAX_FD];
 	char		*line;
 	char		*next;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = read_file(fd, stash, &buffer[fd]);
-	if (!stash)
+	stash[fd] = read_file(fd, stash[fd], buffer[fd]);
+	if (!stash[fd])
 		return (NULL);
-	line = get_line(stash);
+	line = get_line(stash[fd]);
 	if (!line)
 	{
-		free(stash);
-		stash = NULL;
+		free(stash[fd]);
+		stash[fd] = NULL;
 		return (NULL);
 	}
-	next = shift_buffer(stash);
-	free(stash);
-	stash = next;
+	next = shift_buffer(stash[fd]);
+	free(stash[fd]);
+	stash[fd] = next;
 	return (line);
 }
 
-// int main(int argc, char **argv)
-// {
-	// int fd;
-	// char *line;
-// 
-	// if (argc != 2)
-	// {
-		// printf("Usage: %s <file>\n", argv[0]);
-		// return (1);
-	// }
-	// fd = open(argv[1], O_RDONLY);
-	// /* if (fd < 0)
-	// {
-		// perror("Error opening file");
-		// return (1);
-	// } */
-	// line = get_next_line(fd);
-	// while (line)
-	// {
-		// printf("%s", line);
-		// free(line);
-		// line = get_next_line(fd);
-	// }
-	// close(fd);
-	// return (0);
-// }
-
-int main(int argc, char **argv) {
-	int fd = open("test_short.txt", O_RDONLY);
-	int fd2 = 4;
+/* int main(int argc, char **argv)
+{
+	int fd;
 	char *line;
-	line = get_next_line(0);
-	if (!line)
-		printf("NULL\n");
-	else
+
+	if (argc != 2)
+	{
+		printf("Usage: %s <file>\n", argv[0]);
+		return (1);
+	}
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+	{
+		perror("Error opening file");
+		return (1);
+	}
+	line = get_next_line(fd);
+	while (line)
+	{
 		printf("%s", line);
-	free(line);
+		free(line);
+		line = get_next_line(fd);
+	}
 	close(fd);
-}
+	return (0);
+} */

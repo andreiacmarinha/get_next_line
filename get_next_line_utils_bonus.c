@@ -3,63 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andqueir <andreia@student.42.fr>           +#+  +:+       +#+        */
+/*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/13 16:59:29 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/13 17:47:51 by andqueir         ###   ########.fr       */
+/*   Created: 2025/11/18 12:02:19 by andqueir          #+#    #+#             */
+/*   Updated: 2025/11/19 15:37:45 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*ft_strchr(const char *s, int c)
+size_t	ft_strlen(const char *str)
 {
-	if (!s)
-		return (NULL);
-	while (*s)
-	{
-		if (((unsigned char)*s) == ((unsigned char)c))
-			return ((char *)s);
-		s++;
-	}
-	if (c == '\0')
-		return ((char *)s);
-	return (NULL);
-}
+	size_t	i;
 
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	size_t	len;
-	int			i;
-	char		*join;
-
-	if (!s1 || !s2)
-		return (NULL);
-	len = ft_strlen(s1) + ft_strlen(s2);
-	join = ft_calloc((len +1), sizeof(char));
-	if (!join)
-		return (NULL);
-	len = 0;
-	while (s1[len])
-	{
-		join[len] = s1[len];
-		len++;
-	}
+	if (!str)
+		return (0);
 	i = 0;
-	while (s2[i])
-	{
-		join[len + i] = s2[i];
+	while (str[i])
 		i++;
-	}
-	return (join);
+	return (i);
 }
 
 void	ft_bzero(void *s, size_t n)
 {
 	unsigned char	*def;
 
-	def = (unsigned char *) s;
-	while (n --)
+	def = (unsigned char *)s;
+	while (n--)
 	{
 		*def = '\0';
 		def++;
@@ -81,12 +51,44 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (mem);
 }
 
-size_t	ft_strlen(const char *str)
+char	*ft_strchr(const char *str, int c)
 {
-	size_t  i;
+	if (!str)
+		return (NULL);
+	while (*str)
+	{
+		if (((unsigned char)*str) == ((unsigned char)c))
+			return ((char *)str);
+		str++;
+	}
+	if (c == '\0')
+		return ((char *)str);
+	return (NULL);
+}
 
+char	*ft_strjoin(const char *str1, const char *str2)
+{
+	size_t	len;
+	char	*join;
+	int		i;
+
+	if (!str1 || !str2)
+		return (NULL);
+	len = ft_strlen(str1) + ft_strlen(str2);
+	join = ft_calloc((len + 1), sizeof(char));
+	if (!join)
+		return (NULL);
+	len = 0;
+	while (str1[len])
+	{
+		join[len] = str1[len];
+		len++;
+	}
 	i = 0;
-	while (str[i])
+	while (str2[i])
+	{
+		join[len + i] = str2[i];
 		i++;
-	return (i);
+	}
+	return (join);
 }

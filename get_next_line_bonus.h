@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/13 16:35:59 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 17:31:26 by andqueir         ###   ########.fr       */
+/*   Created: 2025/11/18 12:04:44 by andqueir          #+#    #+#             */
+/*   Updated: 2025/11/20 17:31:32 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # include <stdlib.h>
 # include <sys/types.h>
@@ -25,12 +25,14 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
+# define MAX_FD 1024
+
 //utils:
-void	ft_bzero(void *s, size_t n);
 size_t	ft_strlen(const char *str);
-char	*ft_strchr(const char *s, int c);
+void	ft_bzero(void *s, size_t n);
+char	*ft_strchr(const char *str, int c);
 void	*ft_calloc(size_t nmemb, size_t size);
-char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strjoin(const char *str1, const char *str2);
 
 //mains:
 char	*get_next_line(int fd);

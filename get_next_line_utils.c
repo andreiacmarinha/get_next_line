@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andqueir <andreia@student.42.fr>           +#+  +:+       +#+        */
+/*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 16:36:38 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/13 17:47:57 by andqueir         ###   ########.fr       */
+/*   Updated: 2025/11/19 13:15:46 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*ft_strchr(const char *s, int c)
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t	len;
+	size_t		len;
 	int			i;
 	char		*join;
 
@@ -83,8 +83,10 @@ void	*ft_calloc(size_t nmemb, size_t size)
 
 size_t	ft_strlen(const char *str)
 {
-	size_t  i;
+	size_t	i;
 
+	if (!str)
+		return (0);
 	i = 0;
 	while (str[i])
 		i++;
