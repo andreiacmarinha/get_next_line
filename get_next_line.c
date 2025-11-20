@@ -6,7 +6,7 @@
 /*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 16:35:38 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 18:04:00 by andqueir         ###   ########.fr       */
+/*   Updated: 2025/11/20 18:20:05 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,8 @@ char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1])
 			free(stash);
 			return (NULL);
 		}
+		if (bytes_read == 0)
+			break;
 		buffer[bytes_read] = '\0';
 		stash = help_free(stash, buffer);
 		if (!stash)
@@ -105,7 +107,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = read_file(fd, stash, &buffer[fd]);
+	stash = read_file(fd, stash, buffer);
 	if (!stash)
 		return (NULL);
 	line = get_line(stash);
@@ -152,7 +154,7 @@ int main(int argc, char **argv) {
 	int fd = open("test_short.txt", O_RDONLY);
 	int fd2 = 4;
 	char *line;
-	line = get_next_line(0);
+	line = get_next_line(fd2);
 	if (!line)
 		printf("NULL\n");
 	else

@@ -6,7 +6,7 @@
 /*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 12:38:37 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 17:37:34 by andqueir         ###   ########.fr       */
+/*   Updated: 2025/11/20 18:25:13 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*help_free(char *buffer, char *temp)
 {
-	char	tmp;
+	char	*tmp;
 
 	tmp = ft_strjoin(buffer, temp);
 	if (!tmp)
@@ -38,7 +38,9 @@ char	*shift_buffer(char *buffer)
 		return (NULL);
 	while (buffer[i] && buffer[i] != '\n')
 		i++;
-	next = ft_calloc(ft_strlen(buffer), sizeof(char));
+	if (!buffer[i] || !buffer[i + 1])
+		return (NULL); // nothing left after newline
+	next = ft_calloc(ft_strlen(buffer) - i, sizeof(char));
 	if (!next)
 		return (NULL);
 	i++;
@@ -86,6 +88,8 @@ char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1])
 			free(stash);
 			return (NULL);
 		}
+		if (bytes_read == 0)
+			break;
 		buffer[bytes_read] = '\0';
 		stash = help_free(stash, buffer);
 		if (!stash)
@@ -105,6 +109,12 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
 		return (NULL);
+	if (!stash[fd])
+	{
+		stash[fd] = ft_calloc(1, sizeof(char));
+		if (!stash[fd])
+			return (NULL);
+	}
 	stash[fd] = read_file(fd, stash[fd], buffer[fd]);
 	if (!stash[fd])
 		return (NULL);
@@ -123,27 +133,39 @@ char	*get_next_line(int fd)
 
 /* int main(int argc, char **argv)
 {
-	int fd;
-	char *line;
+	int fd1, fd2;
+	char *line1, *line2;
 
-	if (argc != 2)
+	if (argc != 3)
 	{
-		printf("Usage: %s <file>\n", argv[0]);
+		printf("Usage: %s <file1> <file2>\n", argv[0]);
 		return (1);
 	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
+	fd1 = open(argv[1], O_RDONLY);
+	fd2 = open(argv[2], O_RDONLY);
+	if (fd1 < 0 || fd2 < 0)
 	{
 		perror("Error opening file");
 		return (1);
 	}
-	line = get_next_line(fd);
-	while (line)
+	line1 = get_next_line(fd1);
+	line2 = get_next_line(fd2);
+	while (line1 || line2)
 	{
-		printf("%s", line);
-		free(line);
-		line = get_next_line(fd);
+		if (line1)
+		{
+			printf("fd1: %s", line1);
+			free(line1);
+			line1 = get_next_line(fd1);
+		}
+		if (line2)
+		{
+			printf("fd2: %s", line2);
+			free(line2);
+			line2 = get_next_line(fd2);
+		}
 	}
-	close(fd);
+	close(fd1);
+	close(fd2);
 	return (0);
 } */
