@@ -3,40 +3,35 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andqueir <andreia@student.42.fr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 16:35:59 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 17:31:26 by andqueir         ###   ########.fr       */
+/*   Updated: 2025/11/21 11:38:13 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# include <stdlib.h>
-# include <sys/types.h>
-# include <sys/uio.h>
-# include <unistd.h>
-# include <stdint.h>
-# include <stdio.h>
-# include <fcntl.h>
-# include <stdlib.h>
-
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
+
+# include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <stdint.h>
+
+//main:
+char		*get_next_line(int fd);
+
 //utils:
+char	*ft_strdup(char *s1);
 void	ft_bzero(void *s, size_t n);
 size_t	ft_strlen(const char *str);
 char	*ft_strchr(const char *s, int c);
 void	*ft_calloc(size_t nmemb, size_t size);
 char	*ft_strjoin(char const *s1, char const *s2);
-
-//mains:
-char	*get_next_line(int fd);
-char	*get_line(char *buffer);
-char	*shift_buffer(char *buffer);
-char	*help_free(char *buffer, char *temp);
-char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1]);
+char	*ft_substr(char *s, unsigned int start, size_t len);
 
 #endif

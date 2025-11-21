@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andqueir <andreia@student.42.fr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 16:36:38 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/19 13:15:46 by andqueir         ###   ########.fr       */
+/*   Updated: 2025/11/21 11:15:53 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,61 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
+char	*ft_strdup(char *s1)
+{
+	char			*dest;
+	unsigned int	i;
+
+	dest = (char *) malloc(ft_strlen(s1) + 1);
+	if (!dest)
+		return (NULL);
+	i = 0;
+	while (s1[i])
+	{
+		dest[i] = s1[i];
+		i++;
+	}
+	dest[i] = 0;
+	return (dest);
+}
+
+size_t	ft_strlen(const char *str)
+{
+	size_t  i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	char	*str;
+
+	if (!s)
+		return (NULL);
+	if (start > ft_strlen(s))
+		return (malloc(1));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	str = malloc((len + 1) * sizeof(char));
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		str[i] = s[start + i];
+		i++;
+	}
+	str[i] = 0;
+	return (str);
+}
+
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	size_t		len;
+	size_t	len;
 	int			i;
 	char		*join;
 
@@ -52,43 +104,4 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 	}
 	return (join);
-}
-
-void	ft_bzero(void *s, size_t n)
-{
-	unsigned char	*def;
-
-	def = (unsigned char *) s;
-	while (n --)
-	{
-		*def = '\0';
-		def++;
-	}
-}
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	void	*mem;
-
-	if (nmemb == 0 || size == 0)
-		return (malloc(1));
-	if (nmemb > (SIZE_MAX / size))
-		return (NULL);
-	mem = malloc(nmemb * size);
-	if (!mem)
-		return (NULL);
-	ft_bzero(mem, (nmemb * size));
-	return (mem);
-}
-
-size_t	ft_strlen(const char *str)
-{
-	size_t	i;
-
-	if (!str)
-		return (0);
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
 }

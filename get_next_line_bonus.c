@@ -3,82 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andqueir <andqueir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: andqueir <andreia@student.42.fr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/18 12:38:37 by andqueir          #+#    #+#             */
-/*   Updated: 2025/11/20 18:25:13 by andqueir         ###   ########.fr       */
+/*   Created: 2025/11/13 16:57:05 by andqueir          #+#    #+#             */
+/*   Updated: 2025/11/21 11:31:59 by andqueir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-char	*help_free(char *buffer, char *temp)
+void	ft_bzero(void *s, size_t n)
 {
-	char	*tmp;
+	unsigned char	*def;
 
-	tmp = ft_strjoin(buffer, temp);
-	if (!tmp)
+	def = (unsigned char *)s;
+	while (n--)
 	{
-		free(buffer);
-		return (NULL);
+		*def = '\0';
+		def++;
 	}
-	free(buffer);
-	return (tmp);
 }
 
-char	*shift_buffer(char *buffer)
+void	*ft_calloc(size_t nmemb, size_t size)
 {
-	int		i;
-	int		j;
-	char	*next;
+	void	*mem;
 
-	i = 0;
-	j = 0;
-	if (!buffer[i])
+	if (nmemb == 0 || size == 0)
+		return (malloc(1));
+	if (nmemb > (SIZE_MAX / size))
 		return (NULL);
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	if (!buffer[i] || !buffer[i + 1])
-		return (NULL); // nothing left after newline
-	next = ft_calloc(ft_strlen(buffer) - i, sizeof(char));
-	if (!next)
+	mem = malloc(nmemb * size);
+	if (!mem)
 		return (NULL);
-	i++;
-	while (buffer[i])
-		next[j++] = buffer[i++];
-	return (next);
+	ft_bzero(mem, (nmemb * size));
+	return (mem);
 }
 
-char	*get_line(char *buffer)
+// read from fd and append to the leftover buffer until newline
+static char	*read_until_newline(int fd, char *stash, char *buffer)
 {
-	int		i;
-	char	*line;
+	ssize_t	bytes_read;
+	char		*tmp;
 
-	i = 0;
-	if (!buffer[i])
-		return (NULL);
-	while (buffer[i] && buffer[i] != '\n')
-		i++;
-	line = ft_calloc((i + (buffer[i] == '\n') + 1), sizeof(char));
-	if (!line)
-		return (NULL);
-	i = 0;
-	while (buffer[i] && buffer[i] != '\n')
-	{
-		line[i] = buffer[i];
-		i++;
-	}
-	if (buffer[i] == '\n')
-		line[i++] = '\n';
-	return (line);
-}
-
-char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1])
-{
-	int	bytes_read;
-
-	if (!stash)
-		return (NULL);
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
@@ -86,86 +52,66 @@ char	*read_file(int fd, char *stash, char buffer[BUFFER_SIZE + 1])
 		if (bytes_read == -1)
 		{
 			free(stash);
-			return (NULL);
+			return (0);
 		}
-		if (bytes_read == 0)
-			break;
-		buffer[bytes_read] = '\0';
-		stash = help_free(stash, buffer);
+		else if (bytes_read == 0)
+			break ;
+		buffer[bytes_read] = 0;
 		if (!stash)
-			return (NULL);
+			stash = ft_strdup("");
+		tmp = stash;
+		stash = ft_strjoin(tmp, buffer);
+		free(tmp);
+		tmp = NULL;
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
 	return (stash);
 }
 
-char	*get_next_line(int fd)
+// extract the line and update leftover
+static char	*cut_after_nl(char *line)
 {
-	static char	buffer[MAX_FD][BUFFER_SIZE + 1];
-	static char	*stash[MAX_FD];
-	char		*line;
-	char		*next;
+	char	*stash;
+	ssize_t	i;
 
-	if (fd < 0 || fd >= MAX_FD || BUFFER_SIZE <= 0)
-		return (NULL);
-	if (!stash[fd])
+	i = 0;
+	while (line[i] != '\n' && line[i] != '\0')
+		i++;
+	if (line[i] == 0 || line[1] == 0)
+		return (0);
+	stash = ft_substr(line, i + 1, ft_strlen(line) - i);
+	if (*stash == 0)
 	{
-		stash[fd] = ft_calloc(1, sizeof(char));
-		if (!stash[fd])
-			return (NULL);
+		free(stash);
+		stash = NULL;
 	}
-	stash[fd] = read_file(fd, stash[fd], buffer[fd]);
-	if (!stash[fd])
-		return (NULL);
-	line = get_line(stash[fd]);
-	if (!line)
-	{
-		free(stash[fd]);
-		stash[fd] = NULL;
-		return (NULL);
-	}
-	next = shift_buffer(stash[fd]);
-	free(stash[fd]);
-	stash[fd] = next;
-	return (line);
+	line[i + 1] = 0;
+	return (stash);
 }
 
-/* int main(int argc, char **argv)
+char	*get_next_line(int fd)
 {
-	int fd1, fd2;
-	char *line1, *line2;
+	static char	*stash[MAX_FD];
+	char				*line;
+	char				*buffer;
 
-	if (argc != 3)
+	buffer = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		printf("Usage: %s <file1> <file2>\n", argv[0]);
-		return (1);
+		free(stash[fd]);
+		free(buffer);
+		stash[fd] = NULL;
+		buffer = NULL;
+		return (0);
 	}
-	fd1 = open(argv[1], O_RDONLY);
-	fd2 = open(argv[2], O_RDONLY);
-	if (fd1 < 0 || fd2 < 0)
-	{
-		perror("Error opening file");
-		return (1);
-	}
-	line1 = get_next_line(fd1);
-	line2 = get_next_line(fd2);
-	while (line1 || line2)
-	{
-		if (line1)
-		{
-			printf("fd1: %s", line1);
-			free(line1);
-			line1 = get_next_line(fd1);
-		}
-		if (line2)
-		{
-			printf("fd2: %s", line2);
-			free(line2);
-			line2 = get_next_line(fd2);
-		}
-	}
-	close(fd1);
-	close(fd2);
-	return (0);
-} */
+	if (!buffer)
+		return (NULL);
+	line = _fill_line_buffer(fd, stash[fd], buffer);
+	free(buffer);
+	buffer = NULL;
+	if (!line)
+		return (NULL);
+	stash[fd] = _set_line(line);
+	return (line);
+}
